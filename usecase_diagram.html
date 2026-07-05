@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>SafeSchool — Diagramme Use Case</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding: 40px 20px; }
+
+  h1 { text-align: center; font-size: 1.6rem; font-weight: 900; color: #1e293b; margin-bottom: 6px; }
+  .subtitle { text-align: center; color: #64748b; font-size: 0.9rem; margin-bottom: 40px; }
+
+  .diagram { max-width: 1200px; margin: 0 auto; position: relative; }
+
+  /* Actors row */
+  .actors { display: flex; justify-content: space-around; margin-bottom: 0; position: relative; z-index: 2; }
+  .actor { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .actor-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+  .actor-label { font-size: 0.82rem; font-weight: 800; color: #1e293b; }
+  .actor-sub   { font-size: 0.7rem; color: #94a3b8; }
+
+  .actor-line { width: 2px; height: 40px; margin: 0 auto; }
+
+  /* System boundary */
+  .system {
+    background: white;
+    border: 2.5px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  }
+  .system-title {
+    text-align: center; font-size: 0.75rem; font-weight: 900;
+    color: #94a3b8; letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  /* Columns */
+  .columns { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+
+  /* Module */
+  .module {
+    border-radius: 16px;
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .module-header {
+    display: flex; align-items: center; gap: 8px;
+    padding-bottom: 10px; border-bottom: 1.5px solid rgba(0,0,0,0.06);
+  }
+  .module-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .module-title { font-size: 0.8rem; font-weight: 900; }
+
+  /* Use case */
+  .uc {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 7px 10px; border-radius: 10px;
+    background: white; border: 1px solid rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s;
+  }
+  .uc:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+  .uc-num {
+    font-size: 0.65rem; font-weight: 900; min-width: 20px; height: 20px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .uc-text { font-size: 0.75rem; color: #374151; line-height: 1.4; }
+  .uc-sub  { font-size: 0.68rem; color: #94a3b8; margin-top: 2px; }
+
+  /* Colors */
+  .pub  { background: #f0fdf4; }
+  .pub  .module-title { color: #15803d; }
+  .pub  .module-icon  { background: #dcfce7; }
+  .pub  .uc-num       { background: #15803d; color: white; }
+
+  .elv  { background: #eff6ff; }
+  .elv  .module-title { color: #1d4ed8; }
+  .elv  .module-icon  { background: #dbeafe; }
+  .elv  .uc-num       { background: #1d4ed8; color: white; }
+
+  .cons { background: #fdf4ff; }
+  .cons .module-title { color: #7e22ce; }
+  .cons .module-icon  { background: #f3e8ff; }
+  .cons .uc-num       { background: #7e22ce; color: white; }
+
+  .dir  { background: #fff7ed; }
+  .dir  .module-title { color: #c2410c; }
+  .dir  .module-icon  { background: #ffedd5; }
+  .dir  .uc-num       { background: #c2410c; color: white; }
+
+  /* Auth shared */
+  .auth { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 16px; margin-bottom: 20px; }
+  .auth-title { font-size: 0.72rem; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; text-align: center; }
+  .auth-ucs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .auth-uc {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 20px;
+    background: white; border: 1.5px solid #e2e8f0;
+  }
+  .auth-uc .uc-num { background: #475569; color: white; font-size: 0.65rem; font-weight: 900; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .auth-uc .uc-text { font-size: 0.75rem; color: #374151; }
+
+  /* Workflow */
+  .workflow {
+    margin-top: 24px; background: #0f172a; border-radius: 16px;
+    padding: 18px 24px; display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+  }
+  .workflow-title { color: rgba(255,255,255,0.6); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-right: 16px; }
+  .wf-step {
+    display: flex; align-items: center; gap: 0;
+  }
+  .wf-box {
+    padding: 6px 14px; border-radius: 8px;
+    font-size: 0.78rem; font-weight: 800; color: white;
+  }
+  .wf-arrow { color: rgba(255,255,255,0.4); font-size: 1.1rem; padding: 0 8px; }
+  .wf-1 { background: #3b82f6; }
+  .wf-2 { background: #f59e0b; }
+  .wf-3 { background: #8b5cf6; }
+  .wf-4 { background: #10b981; }
+
+  /* Legend */
+  .legend { display: flex; gap: 20px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+  .leg-item { display: flex; align-items: center; gap: 7px; }
+  .leg-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .leg-text { font-size: 0.78rem; color: #64748b; font-weight: 600; }
+
+  /* Stats */
+  .stats { display: flex; gap: 20px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+  .stat { background: white; border-radius: 12px; padding: 12px 24px; text-align: center; border: 1px solid #e2e8f0; }
+  .stat-num { font-size: 1.5rem; font-weight: 900; color: #1e293b; }
+  .stat-lbl { font-size: 0.72rem; color: #94a3b8; font-weight: 600; }
+
+  /* Print */
+  @media print {
+    body { background: white; padding: 10px; }
+    .uc:hover { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🛡️ SafeSchool v2 — Diagramme des Cas d'Utilisation</h1>
+<p class="subtitle">Architecture complète du système · 4 acteurs · 37 cas d'utilisation</p>
+
+<div class="diagram">
+
+  <!-- Actors -->
+  <div class="actors">
+    <div class="actor">
+      <div class="actor-icon" style="background:linear-gradient(135deg,#dcfce7,#86efac)">👤</div>
+      <div class="actor-label">Visiteur</div>
+      <div class="actor-sub">Non connecté</div>
+      <div class="actor-line" style="background:#15803d"></div>
+    </div>
+    <div class="actor">
+      <div class="actor-icon" style="background:linear-gradient(135deg,#dbeafe,#93c5fd)">🎓</div>
+      <div class="actor-label">Élève</div>
+      <div class="actor-sub">Étudiant</div>
+      <div class="actor-line" style="background:#1d4ed8"></div>
+    </div>
+    <div class="actor">
+      <div class="actor-icon" style="background:linear-gradient(135deg,#f3e8ff,#c084fc)">🧑‍💼</div>
+      <div class="actor-label">Conseiller</div>
+      <div class="actor-sub">Psychologue</div>
+      <div class="actor-line" style="background:#7e22ce"></div>
+    </div>
+    <div class="actor">
+      <div class="actor-icon" style="background:linear-gradient(135deg,#ffedd5,#fb923c)">👨‍💻</div>
+      <div class="actor-label">Directeur</div>
+      <div class="actor-sub">Administrateur</div>
+      <div class="actor-line" style="background:#c2410c"></div>
+    </div>
+  </div>
+
+  <!-- System -->
+  <div class="system">
+    <div class="system-title">«system» SafeSchool</div>
+
+    <!-- Auth row -->
+    <div style="display:flex; gap:16px; margin-bottom:20px;">
+
+      <!-- Visiteur box -->
+      <div style="background:#f0fdf4; border:2px solid #86efac; border-radius:16px; padding:14px 18px; min-width:220px;">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
+          <span style="font-size:1.1rem;">👤</span>
+          <span style="font-size:0.72rem;font-weight:900;color:#15803d;text-transform:uppercase;letter-spacing:0.08em;">Visiteur — Sans connexion</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:5px 10px;background:white;border-radius:8px;border:1px solid #bbf7d0;">
+          <span style="background:#15803d;color:white;font-size:0.65rem;font-weight:900;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>
+          <span style="font-size:0.75rem;color:#374151;">Consulter site public uniquement</span>
+        </div>
+        <div style="margin-top:8px;font-size:0.68rem;color:#16a34a;font-style:italic;">✓ Accès libre · pas de compte requis</div>
+      </div>
+
+      <!-- Auth connectés -->
+      <div class="auth" style="flex:1;margin-bottom:0;">
+        <div class="auth-title">🔐 Authentification — Élève · Conseiller · Directeur</div>
+        <div class="auth-ucs">
+          <div class="auth-uc"><span class="uc-num">2</span><span class="uc-text">Se connecter</span></div>
+          <div class="auth-uc"><span class="uc-num">3</span><span class="uc-text">Se déconnecter</span></div>
+          <div class="auth-uc"><span class="uc-num">4</span><span class="uc-text">S'inscrire (élève uniquement)</span></div>
+          <div class="auth-uc"><span class="uc-num">5</span><span class="uc-text">Réinitialiser mot de passe</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 4 columns -->
+    <div class="columns">
+
+      <!-- VISITEUR -->
+      <div class="module pub">
+        <div class="module-header">
+          <div class="module-icon">🌐</div>
+          <div class="module-title">Site Public</div>
+        </div>
+        <div class="uc"><span class="uc-num">6</span><div class="uc-text">Voir page Accueil<div class="uc-sub">Diaporama + activités</div></div></div>
+        <div class="uc"><span class="uc-num">7</span><div class="uc-text">Voir page À propos</div></div>
+        <div class="uc"><span class="uc-num">8</span><div class="uc-text">Voir page Professeurs<div class="uc-sub">Cartes portrait</div></div></div>
+        <div class="uc"><span class="uc-num">9</span><div class="uc-text">Voir Événements & Annonces<div class="uc-sub">Filtrer par catégorie · Voir plus</div></div></div>
+        <div class="uc"><span class="uc-num">10</span><div class="uc-text">Voir page Activités<div class="uc-sub">Filtrer par statut</div></div></div>
+        <div class="uc"><span class="uc-num">11</span><div class="uc-text">Voir page Contact</div></div>
+        <div class="uc"><span class="uc-num">12</span><div class="uc-text">Ouvrir panneau actualités<div class="uc-sub">Cloche flottante</div></div></div>
+      </div>
+
+      <!-- ÉLÈVE -->
+      <div class="module elv">
+        <div class="module-header">
+          <div class="module-icon">🎓</div>
+          <div class="module-title">Espace Élève</div>
+        </div>
+        <div class="uc"><span class="uc-num">13</span><div class="uc-text">Voir tableau de bord<div class="uc-sub">Mes signalements</div></div></div>
+        <div class="uc"><span class="uc-num">14</span><div class="uc-text">Créer un signalement<div class="uc-sub">Type · Anonymat · Numéro auto</div></div></div>
+        <div class="uc"><span class="uc-num">15</span><div class="uc-text">Suivre statut dossier</div></div>
+        <div class="uc"><span class="uc-num">16</span><div class="uc-text">Modifier profil</div></div>
+      </div>
+
+      <!-- CONSEILLER -->
+      <div class="module cons">
+        <div class="module-header">
+          <div class="module-icon">🧑‍💼</div>
+          <div class="module-title">Espace Conseiller</div>
+        </div>
+        <div class="uc"><span class="uc-num">17</span><div class="uc-text">Tableau de bord<div class="uc-sub">Signalements assignés</div></div></div>
+        <div class="uc"><span class="uc-num">18</span><div class="uc-text">Consulter signalement<div class="uc-sub">Détail · Identité masquée si anonyme</div></div></div>
+        <div class="uc"><span class="uc-num">19</span><div class="uc-text">Changer statut signalement<div class="uc-sub">Workflow 4 étapes</div></div></div>
+        <div class="uc"><span class="uc-num">20</span><div class="uc-text">Créer rapport de séance</div></div>
+        <div class="uc"><span class="uc-num">21</span><div class="uc-text">Modifier / supprimer rapport</div></div>
+        <div class="uc"><span class="uc-num">22</span><div class="uc-text">Modifier profil</div></div>
+      </div>
+
+      <!-- DIRECTEUR -->
+      <div class="module dir">
+        <div class="module-header">
+          <div class="module-icon">👨‍💻</div>
+          <div class="module-title">Espace Directeur</div>
+        </div>
+        <div class="uc"><span class="uc-num">23</span><div class="uc-text">Tableau de bord<div class="uc-sub">Stats · Notifications 30s</div></div></div>
+        <div class="uc"><span class="uc-num">24</span><div class="uc-text">Gérer signalements<div class="uc-sub">Tous · Assigner conseiller</div></div></div>
+        <div class="uc"><span class="uc-num">25</span><div class="uc-text">Gérer rendez-vous<div class="uc-sub">1 par dossier · Email auto</div></div></div>
+        <div class="uc"><span class="uc-num">26</span><div class="uc-text">Voir rapports de séance</div></div>
+        <div class="uc"><span class="uc-num">27</span><div class="uc-text">Gérer conseillers</div></div>
+        <div class="uc"><span class="uc-num">28</span><div class="uc-text">Gérer élèves</div></div>
+        <div class="uc"><span class="uc-num">29</span><div class="uc-text">Gérer annonces<div class="uc-sub">Créer · Image · Publier/Masquer</div></div></div>
+        <div class="uc"><span class="uc-num">30</span><div class="uc-text">Gérer activités scolaires<div class="uc-sub">Statut · Image · Lieu</div></div></div>
+        <div class="uc"><span class="uc-num">31</span><div class="uc-text">Gérer photos professeurs</div></div>
+        <div class="uc"><span class="uc-num">32</span><div class="uc-text">Gérer diaporama accueil</div></div>
+        <div class="uc"><span class="uc-num">33</span><div class="uc-text">Modifier contenu site</div></div>
+        <div class="uc"><span class="uc-num">34</span><div class="uc-text">Paramètres école</div></div>
+      </div>
+
+    </div><!-- end columns -->
+
+    <!-- Workflow -->
+    <div class="workflow">
+      <span class="workflow-title">⚡ Workflow Signalement :</span>
+      <div class="wf-step">
+        <span class="wf-box wf-1">1 · جديد (Nouveau)</span>
+        <span class="wf-arrow">→</span>
+        <span class="wf-box wf-2">2 · قيد المعالجة (En traitement)</span>
+        <span class="wf-arrow">→</span>
+        <span class="wf-box wf-3">3 · موعد محدد (RDV fixé)</span>
+        <span class="wf-arrow">→</span>
+        <span class="wf-box wf-4">4 · تم الحل (Résolu)</span>
+      </div>
+    </div>
+
+  </div><!-- end system -->
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#15803d"></div><span class="leg-text">Visiteur (UC 1–12)</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:#1d4ed8"></div><span class="leg-text">Élève (UC 1–16)</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:#7e22ce"></div><span class="leg-text">Conseiller (UC 1–5, 17–22)</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:#c2410c"></div><span class="leg-text">Directeur (UC 1–5, 23–34)</span></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-num">4</div><div class="stat-lbl">Acteurs</div></div>
+    <div class="stat"><div class="stat-num">34</div><div class="stat-lbl">Cas d'utilisation</div></div>
+    <div class="stat"><div class="stat-num">12</div><div class="stat-lbl">Modules</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-lbl">Étapes workflow</div></div>
+  </div>
+
+</div><!-- end diagram -->
+
+</body>
+</html>
